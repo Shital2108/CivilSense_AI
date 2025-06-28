@@ -102,7 +102,7 @@
     function copyAndGo() {
       const text = resultBox.textContent;
       navigator.clipboard.writeText(text).then(() => {
-        window.location.href = "submit.html";
+        window.location.href = "Report Issue.html";
       }).catch(err => {
         alert("❌ Failed to copy.");
         console.error(err);
