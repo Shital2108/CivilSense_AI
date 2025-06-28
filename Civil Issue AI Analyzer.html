@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cohere AI Civil Issue Analyzer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #f0f8ff;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .container {
+      max-width: 600px;
+    }
+    .preview-img {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .result-box {
+      white-space: pre-wrap;
+      background-color: #e8f0fe;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <h2 class="mb-4 text-center">🧠 Civil Issue AI Analyzer</h2>
+
+    <div class="card p-4 shadow-sm">
+      <label class="form-label">Upload Issue Photo (Optional):</label>
+      <input type="file" id="imageInput" class="form-control mb-3" accept="image/*" />
+      <img id="preview" class="preview-img d-none" />
+
+      <label class="form-label mt-3">Describe the issue:</label>
+      <textarea id="description" class="form-control" rows="3" placeholder="E.g. There’s a big pothole near the market..."></textarea>
+
+      <button class="btn btn-primary mt-3 w-100" onclick="analyzeIssue()">Analyze with AI</button>
+
+      <div id="result" class="result-box d-none mt-4"></div>
+
+      <!-- Copy + Redirect Section -->
+      <div id="copySection" class="text-center d-none mt-4">
+        <p>📋 Want to report this issue officially?</p>
+        <button class="btn btn-success" onclick="copyAndGo()">Copy AI Description & Go to Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const imageInput = document.getElementById("imageInput");
+    const preview = document.getElementById("preview");
+    const resultBox = document.getElementById("result");
+    const copySection = document.getElementById("copySection");
+
+    imageInput.addEventListener("change", () => {
+      const file = imageInput.files[0];
+      if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove("d-none");
+      }
+    });
+
+    async function analyzeIssue() {
+      const desc = document.getElementById("description").value.trim();
+      if (!desc) return alert("Please enter a description first.");
+
+      resultBox.classList.remove("d-none");
+      resultBox.textContent = "Analyzing with AI...";
+      copySection.classList.add("d-none");
+
+      try {
+        const res = await fetch("https://api.cohere.ai/v1/chat", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer YOUR_COHERE_API_KEY", // Replace with your real key
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "command-r-plus",
+            temperature: 0.3,
+            message: `You are an AI civic assistant.\n\nGiven this civic complaint:\n"${desc}"\n\nReturn:\n1. Category (e.g., garbage, road damage)\n2. Urgency rating (1–10)\n3. Suggested action`
+          })
+        });
+
+        const data = await res.json();
+        resultBox.textContent = data.text || "❌ No result returned.";
+
+        if (data.text) {
+          copySection.classList.remove("d-none");
+        }
+      } catch (err) {
+        console.error(err);
+        resultBox.textContent = "❌ Error analyzing the issue.";
+      }
+    }
+
+    function copyAndGo() {
+      const text = resultBox.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        window.location.href = "submit.html";
+      }).catch(err => {
+        alert("❌ Failed to copy.");
+        console.error(err);
+      });
+    }
+  </script>
+</body>
+</html>

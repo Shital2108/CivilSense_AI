@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CivilSense_AI – Replicate Captioning</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f8ff;
+      text-align: center;
+      padding: 2rem;
+    }
+    #preview {
+      margin: 1rem auto;
+      max-width: 90%;
+      max-height: 300px;
+      display: none;
+      border-radius: 8px;
+    }
+    .result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #e3f2fd;
+      border-radius: 8px;
+      max-width: 600px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <h1>🚀 CivilSense_AI – Replicate Caption</h1>
+  <p>Upload an image and let AI create a description!</p>
+
+  <input type="file" id="imageInput" accept="image/*" />
+  <img id="preview" alt="Image preview" />
+
+  <div id="result" class="result">Waiting for image...</div>
+
+  <script>
+    const REPLICATE_TOKEN = "YOUR_REPLICATE_API_TOKEN"; // Replace with your actual token
+    const MODEL_URL = "https://api.replicate.com/v1/predictions";
+    const MODEL_VERSION = "de9adbd8fe143a32b22a68f279f3dbb4b986b45e20b385e0c93088c1b74834ed"; // BLIP model version
+
+    const imageInput = document.getElementById("imageInput");
+    const preview = document.getElementById("preview");
+    const resultBox = document.getElementById("result");
+
+    async function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    imageInput.addEventListener("change", async () => {
+      const file = imageInput.files[0];
+      if (!file) {
+        resultBox.innerText = "❌ No file selected.";
+        return;
+      }
+
+      preview.src = URL.createObjectURL(file);
+      preview.style.display = "block";
+      resultBox.innerText = "🧠 Generating caption...";
+
+      try {
+        const base64 = await fileToBase64(file);
+
+        const initResp = await fetch(MODEL_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Token ${REPLICATE_TOKEN}`
+          },
+          body: JSON.stringify({
+            version: MODEL_VERSION,
+            input: { image: "data:image/jpeg;base64," + base64 }
+          })
+        });
+
+        const initData = await initResp.json();
+        const predictionUrl = initData.urls.get;
+
+        // Poll until caption is ready
+        let prediction;
+        while (!prediction || prediction.status !== "succeeded") {
+          await new Promise(r => setTimeout(r, 1000));
+          const statusResp = await fetch(predictionUrl, {
+            headers: { "Authorization": `Token ${REPLICATE_TOKEN}` }
+          });
+          prediction = await statusResp.json();
+
+          if (prediction.status === "failed") {
+            throw new Error("Caption generation failed.");
+          }
+        }
+
+        resultBox.innerText = "✅ " + prediction.output;
+      } catch (err) {
+        console.error(err);
+        resultBox.innerText = "❌ Error generating caption. See console for details.";
+      }
+    });
+  </script>
+</body>
+</html>

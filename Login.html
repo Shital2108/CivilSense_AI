@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login – CivilSense_AI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background: linear-gradient(to right, #e0f2f1, #e1f5fe);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .login-box {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 420px;
+    }
+    .brand-logo {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 10px;
+    }
+    .form-label {
+      font-weight: 600;
+    }
+    .btn-primary {
+      background-color: #00796b;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #004d40;
+    }
+    .credentials-box {
+      background: #e0f7fa;
+      border-left: 4px solid #00796b;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-box text-center">
+  <img src="https://img.icons8.com/fluency/96/city-buildings.png" alt="Logo" class="brand-logo">
+  <h3 class="mb-3">CivilSense_AI</h3>
+  <p class="text-muted">Login to continue</p>
+
+  <div class="credentials-box text-start mb-3">
+    <strong>Username:</strong> <code>user@example.com</code><br/>
+    <strong>Password:</strong> <code>civilsense123</code>
+  </div>
+
+  <div class="mb-3 text-start">
+    <label for="email" class="form-label">📧 Email</label>
+    <input type="email" class="form-control" id="email" placeholder="Enter email">
+  </div>
+
+  <div class="mb-3 text-start">
+    <label for="password" class="form-label">🔒 Password</label>
+    <input type="password" class="form-control" id="password" placeholder="Enter password">
+  </div>
+
+  <button class="btn btn-primary w-100" onclick="login()">Login</button>
+  <div id="message" class="text-center mt-3 fw-semibold"></div>
+</div>
+
+<script>
+  function login() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const message = document.getElementById("message");
+
+    const correctEmail = "user@example.com";
+    const correctPassword = "civilsense123";
+
+    if (email === correctEmail && password === correctPassword) {
+      message.className = "text-success";
+      message.textContent = "✅ Login successful! Redirecting...";
+      setTimeout(() => window.location.href = "index.html", 1200);
+    } else {
+      message.className = "text-danger";
+      message.textContent = "❌ Invalid email or password.";
+    }
+  }
+</script>
+
+</body>
+</html>
