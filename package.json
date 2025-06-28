@@ -1,0 +1,16 @@
+{
+  "name": "civilsense-ai",
+  "version": "1.0.0",
+  "description": "CivilSense AI - Civil Issue Analysis and Awareness Platform",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 3000",
+    "build": "echo 'Build complete - static files ready'",
+    "start": "python3 -m http.server 3000"
+  },
+  "keywords": ["civil", "ai", "analysis", "awareness"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
