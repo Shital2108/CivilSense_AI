@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CivilSense_AI - Submit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background: linear-gradient(to right, #e0f7fa, #f7f9fc);
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .container {
+      max-width: 600px;
+    }
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .card {
+      border-radius: 1rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    .btn-primary {
+      background-color: #00796b;
+      border-color: #00796b;
+    }
+    .btn-primary:hover {
+      background-color: #004d40;
+    }
+  </style>
+</head>
+<body class="py-4">
+
+  <div class="container">
+    <h1 class="text-center mb-4">🚨 CivilSense_AI</h1>
+    <div class="card p-4">
+      <h4 class="mb-4 text-center">📍 Submit a Civic Issue</h4>
+
+      <div class="mb-3">
+        <label for="location" class="form-label">📌 Location</label>
+        <input id="location" class="form-control" placeholder="E.g., Near Shivaji Park, Sector 4" />
+      </div>
+
+      <div class="mb-3">
+        <label for="category" class="form-label">🗂️ Category</label>
+        <select id="category" class="form-select">
+          <option disabled selected>Select a category</option>
+          <option value="Garbage">Garbage</option>
+          <option value="Road Damage">Road Damage</option>
+          <option value="Water Leakage">Water Leakage</option>
+          <option value="Streetlight">Streetlight</option>
+          <option value="Drainage">Drainage</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="severity" class="form-label">🔥 Severity</label>
+        <select id="severity" class="form-select">
+          <option value="Low">Low</option>
+          <option value="Medium" selected>Medium</option>
+          <option value="High">High</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label for="complaint" class="form-label">📝 Description</label>
+        <textarea id="complaint" class="form-control" rows="3" placeholder="Describe the issue..."></textarea>
+      </div>
+
+      <button class="btn btn-primary w-100" id="submitBtn">🚀 Submit Issue</button>
+      <div id="statusMsg" class="alert mt-3 d-none" role="alert"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc
+    } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+    // 🔐 Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDi3UVTIt7LKti5EYFPCGQ6w4bISB16J1s",
+      authDomain: "civicssense-1.firebaseapp.com",
+      projectId: "civicssense-1",
+      storageBucket: "civicssense-1.firebasestorage.app",
+      messagingSenderId: "991852026422",
+      appId: "1:991852026422:web:dc0187be618661ff8f9697"
+    };
+
+    // ✅ Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ✅ Submit complaint function
+    async function submitComplaint() {
+      const location = document.getElementById("location").value.trim();
+      const category = document.getElementById("category").value;
+      const severity = document.getElementById("severity").value;
+      const description = document.getElementById("complaint").value.trim();
+      const statusMsg = document.getElementById("statusMsg");
+
+      // Validation
+      if (!location || !category || !description) {
+        statusMsg.className = "alert alert-danger mt-3";
+        statusMsg.textContent = "❌ Please fill in all fields.";
+        statusMsg.classList.remove("d-none");
+        return;
+      }
+
+      const issue = {
+        location,
+        category,
+        severity,
+        description,
+        status: "Open",
+        timestamp: new Date().toISOString()
+      };
+
+      try {
+        await addDoc(collection(db, "complaints"), issue);
+        statusMsg.className = "alert alert-success mt-3";
+        statusMsg.textContent = "✅ Issue submitted successfully!";
+        statusMsg.classList.remove("d-none");
+
+        // Reset form
+        document.getElementById("location").value = "";
+        document.getElementById("category").selectedIndex = 0;
+        document.getElementById("severity").selectedIndex = 1;
+        document.getElementById("complaint").value = "";
+      } catch (error) {
+        console.error(error);
+        statusMsg.className = "alert alert-danger mt-3";
+        statusMsg.textContent = "❌ Submission failed. Please try again.";
+        statusMsg.classList.remove("d-none");
+      }
+    }
+
+    // 🚀 Attach on click
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("submitBtn").addEventListener("click", submitComplaint);
+    });
+  </script>
+<a href="my-reports.html" class="btn btn-secondary mt-3 w-100">📋 Go to Another Reports</a>
+
+</body>
+</html>

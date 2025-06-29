@@ -37,7 +37,7 @@
       <img id="preview" class="preview-img d-none" />
 
       <label class="form-label mt-3">Describe the issue:</label>
-      <textarea id="description" class="form-control" rows="3" placeholder="E.g. There’s a big pothole near the market..."></textarea>
+      <textarea id="description" class="form-control" rows="3" placeholder="E.g. There's a big pothole near the market..."></textarea>
 
       <button class="btn btn-primary mt-3 w-100" onclick="analyzeIssue()">Analyze with AI</button>
 
@@ -102,7 +102,7 @@
     function copyAndGo() {
       const text = resultBox.textContent;
       navigator.clipboard.writeText(text).then(() => {
-        window.location.href = "Report Issue.html";
+        window.location.href = "report-issue.html";
       }).catch(err => {
         alert("❌ Failed to copy.");
         console.error(err);
