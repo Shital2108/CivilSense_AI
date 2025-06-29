@@ -1,16 +1,17 @@
 {
   "name": "civilsense-ai",
   "version": "1.0.0",
-  "description": "CivilSense AI - Civil Issue Analysis and Awareness Platform",
+  "description": "CivilSense AI - Civil Issue Analysis and Reporting Platform",
   "main": "index.html",
   "scripts": {
-    "dev": "python3 -m http.server 3000",
-    "build": "echo 'Build complete - static files ready'",
-    "start": "python3 -m http.server 3000"
+    "dev": "npx serve -s . -l 3000",
+    "start": "npx serve -s . -l 3000",
+    "build": "echo 'Static site - no build needed'"
   },
-  "keywords": ["civil", "ai", "analysis", "awareness"],
+  "keywords": ["civil", "ai", "reporting", "analysis"],
   "author": "",
-  "license": "MIT",
-  "devDependencies": {},
-  "dependencies": {}
+  "license": "ISC",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
 }
